@@ -18,11 +18,13 @@ if __name__ == "__main__":
         ids.append(random_url())
         page = requests.get("https://prnt.sc/" + ids[i], headers={'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:74.0) Gecko/20100101 Firefox/74.0"})
         tree = html.fromstring(page.content)
-        image = tree.xpath('//img[@id="screenshot-image"]/@src')
-        print(image)
-        if ("//st" not in image[0]):
-            r = requests.get(image[0], stream=True)
+        image = ''.join(tree.xpath('//img[@id="screenshot-image"]/@src'))
+        if ("//st" not in image):
+            print(image)    
+            r = requests.get(image, stream=True)
             if r.status_code == 200:
                 with open( "output/" + ids[i] + ".png", "wb") as f:
                     r.raw.decode_content = True
                     shutil.copyfileobj(r.raw, f)
+        else:
+            print('Image not found. Moving on...')
